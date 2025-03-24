@@ -18,12 +18,12 @@ export class OrderTransService {
   async create(createOrderDto: CreateOrderTransDto): Promise<OrderTrans> {
     const { clientId, productIds, total_amount, payment_status } = createOrderDto;
 
-    const client = await this.userRepo.findOne({ where: { id: clientId } });
-    if (!client) throw new NotFoundException(Client with ID ${clientId} not found);
+    const client = await this.userRepo.findOne({where: { id: clientId } });
+    if (!client) throw new NotFoundException(`Client with ID ${clientId} not found`);
 
 
     const products = await this.productRepo.findByIds(productIds);
-    if (products.length !== productIds.length) throw new NotFoundException(One or more products not found);
+    if (products.length !== productIds.length) throw new NotFoundException(`One or more products not found`);
 
     const newOrder = this.orderRepo.create({
       client,
@@ -43,7 +43,7 @@ export class OrderTransService {
     const order = await this.orderRepo.findOne({where: { id },
       relations: ['client', 'products'],
     });
-    if (!order) throw new NotFoundException(Order with ID ${id} not found);
+    if (!order) throw new NotFoundException(`Order with ID ${id} not found`);
     return order;
   }
 

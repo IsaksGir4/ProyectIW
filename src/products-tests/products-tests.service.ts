@@ -20,10 +20,10 @@ export class ProductsTestsService {
     const {testerId, productId, reaction, rating, survival_status} = createProductsTestDto;
 
     const tester = await this.userRepo.findOne({where: {id: testerId} });
-    if(!tester) throw new NotFoundException(Tester with ID ${testerId} not found);
+    if(!tester) throw new NotFoundException(`Tester with ID ${testerId} not found`);
 
     const product = await this.makeupProductRepo.findOne({where: {id: productId} });
-    if(!product) throw new NotFoundException(Product with ID ${productId} not found);
+    if(!product) throw new NotFoundException(`Product with ID ${productId} not found`);
 
     const newTest = this.producTestRepo.create({
       tester,
@@ -42,7 +42,7 @@ export class ProductsTestsService {
 
   async findOne(id: string): Promise<ProductTest> {
     const test = await this.producTestRepo.findOne({where: {id}, relations: ['tester','product'],})
-    if(!test) throw new NotFoundException(Product test with ID ${id} not found or had been eliminated)
+    if(!test) throw new NotFoundException(`Product test with ID ${id} not found or had been eliminated`)
     return test;
   }
 
