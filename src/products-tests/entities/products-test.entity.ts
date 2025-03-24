@@ -27,8 +27,4 @@ export class ProductTest {
   @Column({ type: 'boolean', default: true })
   @IsBoolean()
   survival_status: boolean;
-<<<<<<< Updated upstream
 }
-=======
-}
->>>>>>> Stashed changes
