@@ -2,7 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@n
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { AuthGuard } from '@nestjs/passport';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { Roles } from 'src/auth/roles.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -14,12 +15,14 @@ export class UsersController {
   }
 
   @Get()
+  @Roles('admin')
   @UseGuards(AuthGuard)
   findAll() {
     return this.usersService.findAll();
   }
 
   @Get(':id')
+  @Roles('admin')
   @UseGuards(AuthGuard)
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(+id);

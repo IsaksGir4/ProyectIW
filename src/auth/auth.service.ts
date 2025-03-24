@@ -27,7 +27,7 @@ export class AuthService {
     const passwordValid = await bcrypt.compare(password,user.password);
     if(!passwordValid) throw new Error ('incorrect password');
 
-    const token = this.jwtService.sign({id: user.id, role: user.role});
+    const token = this.jwtService.sign({ id: user.id, role: user.role }, { secret: process.env.JWT_SECRET || 's3cr3t0_ultr4_S3gur0' });
     return {token};
    }
 
