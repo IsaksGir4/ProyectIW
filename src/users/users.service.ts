@@ -8,32 +8,32 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectRepository(User) private userRepo: Repository<User>){}
+  constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
 
-  async create(createUserDto: CreateUserDto) {
-    const hashedPassword = await bcrypt.hash(createUserDto.password,10);
-    const user = this.userRepo.create({...createUserDto,password: hashedPassword });
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+    const user = this.userRepo.create({ ...createUserDto, password: hashedPassword });
     return this.userRepo.save(user);
   }
 
-  findAll() {
+  async findAll(): Promise<User[]> {
     return this.userRepo.find();
   }
 
-  async findOne(id: number) {
-    const user = await this.userRepo.findOne({where: {id}});
-    if(!user) throw new NotFoundException('User not found or had been eliminated');
+  async findOne(id: string): Promise<User> {
+    const user = await this.userRepo.findOne({ where: { id }, relations: ['purchase_history', 'productTest'] });
+    if (!user) throw new NotFoundException('User not found or had been eliminated');
     return user;
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
-    await this.userRepo.update(id,updateUserDto);
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+    await this.userRepo.update(id, updateUserDto);
     return this.findOne(id);
   }
 
-  async remove(id: number) {
+  async remove(id: string): Promise<{ message: string }> {
     const user = await this.findOne(id);
     await this.userRepo.remove(user);
-    return {message: 'deleted user'};
+    return { message: 'deleted user' };
   }
 }

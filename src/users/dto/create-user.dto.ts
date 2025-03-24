@@ -13,5 +13,12 @@ export class CreateUserDto {
 
   @IsEnum(UserRole)
   @IsOptional()
-  role?: UserRole; //By defect will be client
+  role?: UserRole;
+
+  @IsOptional()
+  test_subject_status?: boolean;
+
+  @IsOptional()
+  allergic_reactions?: string;
 }
+
