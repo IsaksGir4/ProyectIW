@@ -56,6 +56,6 @@ export class ProductsTestsService {
   async remove(id: string): Promise<{message: string}> {
     const test = await this.findOne(id)
     await this.producTestRepo.remove(test);
-    return {message: 'Product eliminated'};
+    return {message: 'test eliminated'};
   }
 }
