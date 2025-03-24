@@ -11,7 +11,7 @@ export enum PaymentStat {
 export class OrderTrans {
 
 @PrimaryGeneratedColumn('uuid')
-id : string;
+id : string
 
 @Column('uuid')
 client_id : string
