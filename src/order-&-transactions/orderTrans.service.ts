@@ -1,26 +1,61 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateOrderTransDto } from './dto/create-orderTrans.dto';
 import { UpdateOrderTransDto } from './dto/update-orderTrans.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { OrderTrans } from './entities/orderTrans.entity';
+import { User } from 'src/users/entities/user.entity';
+import { MakeupProduct } from 'src/makeup-products/entities/makeup-product.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class OrderTransService {
-  create(createOrderDto: CreateOrderTransDto) {
-    return 'This action adds a new order';
+  constructor(
+    @InjectRepository(OrderTrans) private orderRepo: Repository<OrderTrans>,
+    @InjectRepository(User) private userRepo: Repository<User>,
+    @InjectRepository(MakeupProduct) private productRepo: Repository<MakeupProduct>,
+  ) {}
+
+  async create(createOrderDto: CreateOrderTransDto): Promise<OrderTrans> {
+    const { clientId, productIds, total_amount, payment_status } = createOrderDto;
+
+    const client = await this.userRepo.findOne({where: { id: clientId } });
+    if (!client) throw new NotFoundException(`Client with ID ${clientId} not found`);
+
+
+    const products = await this.productRepo.findByIds(productIds);
+    if (products.length !== productIds.length) throw new NotFoundException(`One or more products not found`);
+
+    const newOrder = this.orderRepo.create({
+      client,
+      products,
+      total_amount,
+      payment_status,
+    });
+
+    return await this.orderRepo.save(newOrder);
   }
 
-  findAll() {
-    return `This action returns all order`;
+  async findAll(): Promise<OrderTrans[]> {
+    return await this.orderRepo.find({ relations: ['client', 'products'] });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} order`;
+  async findOne(id: string): Promise<OrderTrans> {
+    const order = await this.orderRepo.findOne({where: { id },
+      relations: ['client', 'products'],
+    });
+    if (!order) throw new NotFoundException(`Order with ID ${id} not found`);
+    return order;
   }
 
-  update(id: number, updateOrderTransDto: UpdateOrderTransDto) {
-    return `This action updates a #${id} order`;
+  async update(id: string, updateOrderDto: UpdateOrderTransDto): Promise<OrderTrans> {
+    const order = await this.findOne(id);
+    Object.assign(order, updateOrderDto);
+    return await this.orderRepo.save(order);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} order`;
+  async remove(id: string): Promise<{ message: string }> {
+    const order = await this.findOne(id);
+    await this.orderRepo.remove(order);
+    return { message: 'Order deleted' };
   }
 }
