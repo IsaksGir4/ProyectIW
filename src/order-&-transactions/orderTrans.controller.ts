@@ -11,7 +11,7 @@ export class OrderTransController {
   constructor(private readonly orderTransService: OrderTransService) {}
 
   @Post()
-  @Roles('admin','employee', 'client')
+  @Roles('admin','employee')
   @UseGuards(AuthGuard)
   async create(@Body() createOrderDto: CreateOrderTransDto): Promise<OrderTrans> {
     return this.orderTransService.create(createOrderDto);
@@ -41,7 +41,7 @@ export class OrderTransController {
   @Delete(':id')
   @Roles('admin')
   @UseGuards(AuthGuard)
-  async remove(@Param('id') id: string): Promise<void> {
-    await this.orderTransService.remove(id);
+  async remove(@Param('id') id: string): Promise<{message: string}> {
+    return await this.orderTransService.remove(id);
   }
 }

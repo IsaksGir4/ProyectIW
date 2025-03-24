@@ -21,7 +21,7 @@ export class UsersService {
   }
 
   async findOne(id: string): Promise<User> {
-    const user = await this.userRepo.findOne({ where: { id }, relations: ['purchase_history', 'productTest'] });
+    const user = await this.userRepo.findOne({ where: { id }, relations: ['purchase_history', 'productTests'] });
     if (!user) throw new NotFoundException('User not found or had been eliminated');
     return user;
   }

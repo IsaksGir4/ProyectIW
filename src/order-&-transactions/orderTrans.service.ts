@@ -1,11 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateOrderTransDto } from './dto/create-orderTrans.dto';
 import { UpdateOrderTransDto } from './dto/update-orderTrans.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OrderTrans } from './entities/orderTrans.entity';
 import { User } from 'src/users/entities/user.entity';
 import { MakeupProduct } from 'src/makeup-products/entities/makeup-product.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 @Injectable()
 export class OrderTransService {
@@ -17,20 +17,25 @@ export class OrderTransService {
 
   async create(createOrderDto: CreateOrderTransDto): Promise<OrderTrans> {
     const { clientId, productIds, total_amount, payment_status } = createOrderDto;
-
+    
     const client = await this.userRepo.findOne({ where: { id: clientId } });
     if (!client) throw new NotFoundException(`Client with ID ${clientId} not found`);
-
-    const products = await this.productRepo.findByIds(productIds);
-    if (products.length !== productIds.length) throw new NotFoundException(`One or more products not found`);
-
+  
+    if (!Array.isArray(productIds) || productIds.length === 0) 
+      throw new BadRequestException(' register the product again');
+  
+    const products = await this.productRepo.findBy({ id: In(productIds) });
+  
+    if (products.length !== productIds.length) 
+      throw new NotFoundException('One or more products not found');
+  
     const newOrder = this.orderRepo.create({
       client,
       products,
       total_amount,
       payment_status,
     });
-
+  
     return await this.orderRepo.save(newOrder);
   }
 
@@ -53,8 +58,8 @@ export class OrderTransService {
   }
 
   async remove(id: string): Promise<{ message: string }> {
-    const order = await this.findOne(id);
+    const order = await this.findOne(id);  
     await this.orderRepo.remove(order);
-    return { message: 'Order deleted' };
+    return { message: `✅ Order with ID ${id} successfully deleted` };
   }
 }

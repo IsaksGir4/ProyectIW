@@ -4,6 +4,7 @@ import { CreateMakeupProductDto } from './dto/create-makeup-product.dto';
 import { UpdateMakeupProductDto } from './dto/update-makeup-product.dto';
 import { Roles } from 'src/auth/roles.decorator';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { MakeupProduct } from './entities/makeup-product.entity';
 
 
 @Controller('makeup-products')
@@ -13,35 +14,35 @@ export class MakeupProductsController {
   @Post()
   @Roles('admin', 'employee')
   @UseGuards(AuthGuard)
-  create(@Body() createMakeupProductDto: CreateMakeupProductDto) {
+  async create(@Body() createMakeupProductDto: CreateMakeupProductDto): Promise<MakeupProduct> {
     return this.makeupProductsService.create(createMakeupProductDto);
   }
 
   @Get()
   @Roles('admin', 'employee')
   @UseGuards(AuthGuard)
-  findAll() {
+  async findAll(): Promise<MakeupProduct[]> {
     return this.makeupProductsService.findAll();
   }
 
   @Get(':id')
   @Roles('admin', 'employee')
   @UseGuards(AuthGuard)
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string): Promise<MakeupProduct> {
     return this.makeupProductsService.findOne(id);
   }
 
   @Patch(':id')
   @Roles('admin', 'employee')
   @UseGuards(AuthGuard)
-  update(@Param('id') id: string, @Body() updateMakeupProductDto: UpdateMakeupProductDto) {
+  async update(@Param('id') id: string, @Body() updateMakeupProductDto: UpdateMakeupProductDto): Promise<MakeupProduct> {
     return this.makeupProductsService.update(id, updateMakeupProductDto);
   }
 
   @Delete(':id')
   @Roles('admin')
   @UseGuards(AuthGuard)
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string): Promise<{message: string}> {
     return this.makeupProductsService.remove(id);
   }
 }
