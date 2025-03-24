@@ -15,4 +15,8 @@ export class CreateOrderTransDto {
   
     @IsEnum(PaymentStatus)
     payment_status: PaymentStatus;
+<<<<<<< Updated upstream
   }
+=======
+  }
+>>>>>>> Stashed changes

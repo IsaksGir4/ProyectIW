@@ -18,7 +18,11 @@ export class OrderTransService {
   async create(createOrderDto: CreateOrderTransDto): Promise<OrderTrans> {
     const { clientId, productIds, total_amount, payment_status } = createOrderDto;
 
+<<<<<<< Updated upstream
     const client = await this.userRepo.findOne({where: { id: clientId } });
+=======
+    const client = await this.userRepo.findOne({ where: { id: clientId } });
+>>>>>>> Stashed changes
     if (!client) throw new NotFoundException(`Client with ID ${clientId} not found`);
 
 

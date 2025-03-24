@@ -25,14 +25,14 @@ const dbUrl = new URL(process.env.DATABASE_URL);
       type: 'postgres',
       host: dbUrl.hostname,
       port: Number(dbUrl.port),
-      username: dbUrl.username, // Usuario
-      password: dbUrl.password, // Contraseña
-      database: dbUrl.pathname?.substring(1), // Nombre de la DB
+      username: dbUrl.username,
+      password: dbUrl.password,
+      database: dbUrl.pathname?.substring(1),
       autoLoadEntities: true,
       synchronize: true,
       extra: {
         ssl: {
-          rejectUnauthorized: false, // 📌 Supabase requiere SSL
+          rejectUnauthorized: false, 
         },
       },
     }),

@@ -57,5 +57,10 @@ export class ProductsTestsService {
     const test = await this.findOne(id)
     await this.producTestRepo.remove(test);
     return {message: 'Product eliminated'};
+<<<<<<< Updated upstream
   }
 }
+=======
+  }
+}
+>>>>>>> Stashed changes
