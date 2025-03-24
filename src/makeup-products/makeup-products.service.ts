@@ -1,26 +1,38 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateMakeupProductDto } from './dto/create-makeup-product.dto';
 import { UpdateMakeupProductDto } from './dto/update-makeup-product.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { MakeUpProduct } from './entities/makeup-product.entity';
+import { Repository } from 'typeorm';
+import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class MakeupProductsService {
+constructor(@InjectRepository(MakeUpProduct) private productRepo: Repository<MakeUpProduct>){}
+
   create(createMakeupProductDto: CreateMakeupProductDto) {
-    return 'This action adds a new makeupProduct';
+    const product = this.productRepo.create(createMakeupProductDto);
+    return this.productRepo.save(product);
   }
 
   findAll() {
-    return `This action returns all makeupProducts`;
+    return this.productRepo.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} makeupProduct`;
+  async findOne(id: number) {
+    const product = await this.productRepo.findOne({where: {id}});
+    if(!product) throw new NotFoundException('Product Not found');
+    return product;
   }
 
-  update(id: number, updateMakeupProductDto: UpdateMakeupProductDto) {
-    return `This action updates a #${id} makeupProduct`;
+  async update(id: number, updateMakeupProductDto: UpdateMakeupProductDto) {
+    await this.productRepo.update(id,updateMakeupProductDto);
+    return this.findOne(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} makeupProduct`;
+  async remove(id: number) {
+    const product = await this.findOne(id);
+    await this.productRepo.remove(product);
+    return {message: 'Product eliminated'};
   }
 }
