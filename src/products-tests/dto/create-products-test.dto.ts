@@ -1,14 +1,24 @@
-import { IsBoolean, IsNumber, IsString, Max, Min } from "class-validator";
+import { IsBoolean, IsInt, IsNotEmpty, IsString, IsUUID, Max, Min } from "class-validator";
 
 export class CreateProductsTestDto {
-    @IsString()
-    readonly reaction : string;
+    
+    @IsUUID()
+    @IsNotEmpty()
+    testerId: string;
 
-    @IsNumber()
+    @IsUUID()
+    @IsNotEmpty()
+    productId: string;
+
+    @IsString()
+    @IsNotEmpty()
+    reaction: string;
+
+    @IsInt()
     @Min(1)
     @Max(10)
-    readonly rating : number;
+    rating: number;
 
     @IsBoolean()
-    readonly survival_status : boolean;
+    survival_status: boolean;
 }

@@ -1,28 +1,30 @@
-import { MakeUpProduct } from "src/makeup-products/entities/makeup-product.entity";
-import { Entity, PrimaryGeneratedColumn, Column, Collection} from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, JoinTable } from 'typeorm';
+import { User } from 'src/users/entities/user.entity';
+import { MakeupProduct } from 'src/makeup-products/entities/makeup-product.entity';
+import { Min } from 'class-validator';
 
-export enum PaymentStat {
-    PAID = 'paid',
-    REFUNDED = 'refunded',
-    FAILED = 'failed'
+export enum PaymentStatus {
+  PAID = 'Paid',
+  REFUNDED = 'Refunded',
+  FAILED = 'Failed',
 }
 
-@Entity('orderTrans')
+@Entity()
 export class OrderTrans {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-@PrimaryGeneratedColumn('uuid')
-id : string
+  @ManyToOne(() => User, (user) => user.purchase_history, { onDelete: 'CASCADE' })
+  client: User;
 
-@Column('uuid')
-client_id : string
+  @ManyToMany(() => MakeupProduct)
+  @JoinTable()
+  products: MakeupProduct[];
 
-@Column()
-products : MakeUpProduct
+  @Column({ type: 'decimal' })
+  @Min(0)
+  total_amount: number;
 
-@Column('decimal')
-total_amount : number
-
-@Column({ type: 'enum', enum: PaymentStat })
-payment_status : PaymentStat
-
+  @Column({ type: 'enum', enum: PaymentStatus, default: PaymentStatus.PAID })
+  payment_status: PaymentStatus;
 }

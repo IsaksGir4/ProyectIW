@@ -1,23 +1,30 @@
-import { PrimaryGeneratedColumn, Entity, Column,  } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { MakeupProduct } from 'src/makeup-products/entities/makeup-product.entity';
+import { IsInt, IsUUID, Max, Min, IsBoolean, IsString } from 'class-validator';
+import { User } from 'src/users/entities/user.entity';
 
-@Entity('products-tests')
-export class ProductsTest {
+@Entity()
+export class ProductTest {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-@PrimaryGeneratedColumn('uuid')
-id: string;
+  @ManyToOne(() => User, (user) => user.productTests, { onDelete: 'CASCADE', eager: true })
+  tester: User;
 
-@Column('uuid')
-tester_id : string;
+  @ManyToOne(() => MakeupProduct, (product) => product.productTests, { onDelete: 'CASCADE', eager: true })
+  product: MakeupProduct;
 
-@Column('uuid')
-product_id : string;
+  @Column({ type: 'text' })
+  @IsString()
+  reaction: string; 
 
-@Column('text',{ nullable : false })
-reaction : string;  
+  @Column({ type: 'int', default: 5 })
+  @IsInt()
+  @Min(1)
+  @Max(10)
+  rating: number; 
 
-@Column('int',{ nullable: false })
-rating : number;  
-
-@Column('boolean', { nullable : false })
-survival_status : boolean;  
+  @Column({ type: 'boolean', default: true })
+  @IsBoolean()
+  survival_status: boolean;
 }
