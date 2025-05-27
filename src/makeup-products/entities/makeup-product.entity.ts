@@ -3,7 +3,7 @@ import { ProductTest } from 'src/products-tests/entities/products-test.entity';
 import { Max, Min } from 'class-validator';
 
 export enum ProductCategory {
-  LIPSTICK = 'lipstick',
+  LIPSTICK = 'Lipstick',
   FOUNDATION = 'foundation',
   EYESHADOW = 'eyeshadow',
   OTHER = 'other',
