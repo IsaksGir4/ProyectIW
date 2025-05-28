@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { UsersService } from 'src/users/users.service';
 import {User, UserRole} from 'src/users/entities/user.entity';
 
 @Injectable()
@@ -10,7 +11,18 @@ export class AuthService {
    constructor(
     @InjectRepository(User) private userRepo: Repository<User>,
     private jwtService: JwtService,
+   private usersService: UsersService
+
    ) {}
+
+   async validateUser(email: string, pass: string): Promise<any> {
+    const user = await this.usersService.findOne(email);
+    if (user && await bcrypt.compare(pass, user.password)) {
+      const { password, ...result } = user;
+      return result;
+    }
+    return null;
+  }
 
    //este metodo registra y al momento de registrar realiza una copia de la entidad de usurario en el que meramente hashea la contrasena
    async register(email: string, name: string, password: string, role: UserRole){

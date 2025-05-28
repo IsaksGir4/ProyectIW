@@ -19,7 +19,7 @@ export class MakeupProductsService {
   }
 
   async findOne(id: string): Promise<MakeupProduct> {
-    const product = await this.productRepo.findOne({ where: { id }, relations: ['productTest'] });
+    const product = await this.productRepo.findOne({ where: { id }, relations: ['productTests'] });
     if (!product) throw new NotFoundException('Product Not found or had been eliminated');
     return product;
   }

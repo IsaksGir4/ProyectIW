@@ -19,6 +19,15 @@ if (!process.env.DATABASE_URL) {
 
 const dbUrl = new URL(process.env.DATABASE_URL);
 
+// Determinar si usar SSL basado en el entorno o la URL
+const isProduction = process.env.NODE_ENV === 'production';
+let useSsl = isProduction || dbUrl.hostname.includes('render.com') || dbUrl.hostname.includes('fly.io') || dbUrl.hostname.includes('elephantsql.com'); // Puedes añadir otros hosts de proveedores de DB en la nube aquí
+
+// Si la conexión es a localhost o una IP local, forzamos useSsl a false
+if (dbUrl.hostname === 'localhost' || dbUrl.hostname === '127.0.0.1') {
+  useSsl = false;
+}
+
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -30,11 +39,9 @@ const dbUrl = new URL(process.env.DATABASE_URL);
       database: dbUrl.pathname?.substring(1),
       autoLoadEntities: true,
       synchronize: true,
-      extra: {
-        ssl: {
-          rejectUnauthorized: false, 
-        },
-      },
+       ssl: useSsl ? { rejectUnauthorized: false } : false, // <--- ¡AQUÍ ESTÁ LA CLAVE!
+
+      
     }),
     UsersModule, MakeupProductsModule, ProductsTestsModule, OrderTransModule, AuthModule,
   ],

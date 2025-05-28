@@ -20,6 +20,13 @@ export class UsersService {
     return this.userRepo.find();
   }
 
+   async findByEmail(email: string): Promise<User | null> {
+    // Puedes incluir relaciones aquí si las necesitas al buscar un usuario por email
+    // Por ejemplo, para cargar roles o permisos asociados al usuario
+    const user = await this.userRepo.findOne({ where: { email } });
+    return user;
+  }
+
   async findOne(id: string): Promise<User> {
     const user = await this.userRepo.findOne({ where: { id }, relations: ['purchase_history', 'productTests'] });
     if (!user) throw new NotFoundException('User not found or had been eliminated');
