@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+  
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
@@ -17,6 +17,19 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false
-  }
+    "noFallthroughCasesInSwitch": false,
+    "lib": ["dom", "dom.iterable", "esnext"], 
+    "esModuleInterop": true, 
+     "moduleResolution": "node", // Generalmente es "node" para la mayoría de los setups
+    "module": "esnext", // O "commonjs" dependiendo de tu bundler
+        
+  },
+   "include": [
+    "src" // Asegúrate de que tu carpeta 'src' esté incluida
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }
+

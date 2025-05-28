@@ -8,7 +8,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   // label?: string; // Si quieres un label integrado en el componente input
 }
 
-const Input: React.FC<InputProps> = ({
+export const Input: React.FC<InputProps> = ({
   className,
   type = "text", // Valor por defecto para el tipo de input
   ...props

@@ -2,8 +2,9 @@
 import React, { useState, FormEvent } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { Button } from "src/components/ui";
-import Input from "src/components/ui/input";
+// Ajusta estas rutas según tu configuración (alias o relativas)
+import Button from "../components/ui/button"; // O "../components/ui/button"
+import Input from "../components/ui/input";   // O "../components/ui/input"
 
 interface LoginResponse {
   token: string;
@@ -18,7 +19,7 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError(""); // Limpiar errores previos
+    setError("");
 
     if (!email || !password) {
       setError("Por favor, ingresa tu email y contraseña.");
@@ -27,102 +28,113 @@ const Login: React.FC = () => {
 
     try {
       const response = await axios.post<LoginResponse>(
-        "http://localhost:3000/api/auth/login", // Asegúrate que esta URL sea correcta y esté en una variable de entorno
+        "http://localhost:3000/auth/login",
         { email, password }
       );
 
-      const { token, role } = response.data;
-      localStorage.setItem("token", token);
-      // Opcional: guardar el rol también si lo necesitas globalmente
-      // localStorage.setItem("userRole", role);
+      localStorage.setItem("authToken", response.data.token);
+      localStorage.setItem("userRole", response.data.role);
 
-      if (role === "ADMIN") {
-        navigate("/admin");
-      } else if (role === "USER") {
-        navigate("/user"); // O la ruta que corresponda para usuarios normales
-      } else {
-        // Manejar roles desconocidos o redirigir a una página por defecto
-        navigate("/");
-      }
-    } catch (err: any) { // Es buena práctica tipar el error si conoces su estructura
+      navigate("/dashboard");
+    } catch (err: any) {
       if (axios.isAxiosError(err) && err.response) {
-        // Asumir que el backend envía un mensaje de error en err.response.data.message o similar
-        setError(err.response.data.message || "Error al iniciar sesión. Inténtalo de nuevo.");
+        setError(err.response.data.message || "Error al iniciar sesión.");
       } else {
         setError("Ocurrió un error inesperado. Inténtalo de nuevo.");
       }
-      console.error("Login error:", err);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100"> {/* Contenedor principal centrado */}
-      <div className="p-8 bg-white rounded-lg shadow-md w-full max-w-md"> {/* Tarjeta del formulario */}
-        <h2 className="text-2xl font-bold text-center text-gray-700 mb-6">
-          Iniciar Sesión
-        </h2>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Correo Electrónico
-            </label>
-            <Input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="tu@email.com"
-              // Asumiendo que tu componente Input acepta className
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-              required
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Contraseña
-            </label>
-            <Input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              // Asumiendo que tu componente Input acepta className
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-              required
-            />
-            {/* Aquí podrías agregar un enlace para "Olvidé mi contraseña" */}
-            {/* <a href="#" className="text-sm text-indigo-600 hover:text-indigo-500 float-right">¿Olvidaste tu contraseña?</a> */}
+    // Contenedor principal: Ocupa toda la pantalla, con un fondo degradado y centra el contenido
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      {/* Tarjeta del formulario de login */}
+      <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-2xl border border-gray-200">
+        <div>
+          {/* Título y subtítulo centrados */}
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Bienvenido de Nuevo
+          </h2>
+          <p className="mt-2 text-center text-sm text-gray-600">
+            Inicia sesión para continuar
+          </p>
+        </div>
+
+        {/* Formulario */}
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          {/* Grupo de inputs (para que parezcan unidos) */}
+          <div className="rounded-md shadow-sm -space-y-px">
+            <div>
+              <label htmlFor="email-address" className="sr-only">
+                Correo Electrónico
+              </label>
+              <Input
+                id="email-address"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Correo Electrónico"
+                // Clases específicas para el input de email (borde superior redondeado)
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+              />
+            </div>
+            <div>
+              <label htmlFor="password" className="sr-only">
+                Contraseña
+              </label>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Contraseña"
+                // Clases específicas para el input de contraseña (borde inferior redondeado y margen negativo)
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm mt-[-1px]"
+              />
+            </div>
           </div>
 
+          {/* Enlace "¿Olvidaste tu contraseña?" */}
+          <div className="flex items-center justify-end"> {/* Alineado a la derecha */}
+            <div className="text-sm">
+              <a href="#" className="font-medium text-blue-600 hover:text-blue-500 transition duration-150 ease-in-out">
+                ¿Olvidaste tu contraseña?
+              </a>
+            </div>
+          </div>
+
+          {/* Mensaje de error */}
           {error && (
-            <p className="text-sm text-red-600 bg-red-100 p-3 rounded-md">
+            <p className="text-red-600 text-sm text-center font-medium">
               {error}
             </p>
           )}
 
+          {/* Botón de Iniciar Sesión */}
           <div>
             <Button
               type="submit"
-              // Asumiendo que tu componente Button acepta className
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              disabled={!email || !password}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              Ingresar
+              Iniciar Sesión
             </Button>
           </div>
         </form>
-        <p className="mt-6 text-center text-sm text-gray-600">
+
+        {/* Enlace para registrarse */}
+        <div className="mt-6 text-center text-sm text-gray-600">
           ¿No tienes una cuenta?{" "}
-          <a href="/signup" className="font-medium text-indigo-600 hover:text-indigo-500">
+          <a href="register" className="font-medium text-blue-600 hover:text-blue-500 transition duration-150 ease-in-out">
             Regístrate
           </a>
-        </p>
+        </div>
       </div>
     </div>
   );
