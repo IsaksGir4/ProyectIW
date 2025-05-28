@@ -15,6 +15,8 @@ import ProductTestsPage from './pages/ProductTest';
 import './App.css'; 
 import OrdersPage from './pages/OrdersPage';
 import TransactionsPage from './pages/TransactionPage';
+import OrderTransPage from './pages/ordersTransPage';
+import UsersPage from './pages/UserPage';
 
 function App() {
   return (
@@ -28,13 +30,8 @@ function App() {
           <Route path="/dashboard" element={<DashboardLayout />}>
             <Route index element={<DashboardHome />} /> {/* Ruta por defecto de /dashboard */}
             <Route path="makeup-products" element={<MakeupProductsPage />} />
-
-             <Route element={<PrivateRoute allowedRoles={[UserRole.ADMIN, UserRole.EMPLOYEE]} />}>
-              <Route path="orders" element={<OrdersPage />} />
-              <Route path="transactions" element={<TransactionsPage />} />
-            </Route>
-        
-            
+            <Route path="orders" element={<OrderTransPage />} />
+            <Route path="users" element={<UsersPage />} /> 
             <Route element={<PrivateRoute allowedRoles={[UserRole.ADMIN, UserRole.TESTER]} />}>
               <Route path="product-tests" element={<ProductTestsPage />} />
             </Route>
